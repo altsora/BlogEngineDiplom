@@ -1,0 +1,7 @@
+CREATE TABLE captcha_codes
+(
+    id     BIGINT AUTO_INCREMENT PRIMARY KEY,
+    time   DATETIME     NOT NULL,
+    code   VARCHAR(255) NOT NULL,
+    secret VARCHAR(255) NOT NULL
+)
