@@ -2,6 +2,8 @@ package diplom.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,6 +12,8 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data
+@ToString(exclude = {"posts", "modifiedPosts", "comments"})
+@EqualsAndHashCode(exclude = {"posts", "modifiedPosts", "comments"})
 public class User {
     private long id;
     private boolean isModerator;
@@ -21,8 +25,9 @@ public class User {
     private String photo;
     private Set<Post> posts;
     private Set<Post> modifiedPosts;
+    private Set<Comment> comments;
 
-    //==============================================================================
+    //------------------------------------------------------------------------------------------------------------------
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,5 +55,11 @@ public class User {
     @OneToMany(mappedBy = "moderator")
     public Set<Post> getModifiedPosts() {
         return modifiedPosts;
+    }
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user")
+    public Set<Comment> getComments() {
+        return comments;
     }
 }

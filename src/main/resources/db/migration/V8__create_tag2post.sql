@@ -1,0 +1,6 @@
+CREATE TABLE tag2post
+(
+    id      BIGINT(20) AUTO_INCREMENT PRIMARY KEY,
+    post_id BIGINT(20) NOT NULL REFERENCES posts (id),
+    tag_id  BIGINT(20) NOT NULL REFERENCES tags (id)
+)
