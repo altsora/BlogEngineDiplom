@@ -6,3 +6,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+    show-sql: false
+
+blog:
+  title: DevPub
+  subtitle: Developer Stories
+  phone: +7 123 456-78-90
+  email: java@mail.ru
+  copyright: Alexander Vergun
+  copyrightFrom: 2015
