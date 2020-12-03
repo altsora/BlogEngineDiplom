@@ -20,6 +20,7 @@ public class PostController {
             @RequestParam(value = "limit") int limit,
             @RequestParam(value = "mode") String mode
     ) {
+
         return null;
     }
 }
