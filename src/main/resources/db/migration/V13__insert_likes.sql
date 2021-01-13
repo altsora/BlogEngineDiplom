@@ -1,0 +1,66 @@
+SET @start_time = '2017-01-01 00:00:00';
+SET @value = 60 * 60 * 24 * 365;
+
+INSERT INTO votes (user_id, post_id, time, value)
+VALUES (1, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (2, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (3, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (4, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (5, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (6, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (7, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (8, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (9, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (10, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (11, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (12, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (13, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+
+       (1, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (2, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (3, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (4, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (5, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (6, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (7, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (8, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (9, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (10, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (11, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (12, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (13, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+
+       (2, 8, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (3, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (4, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (5, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (6, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (7, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (8, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (9, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (10, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (11, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (12, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (13, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+
+       (2, 9, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (3, 9, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (4, 9, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (5, 9, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (6, 9, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (7, 9, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+
+       (2, 10, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (3, 10, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (4, 10, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (5, 10, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (6, 10, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+
+       (2, 11, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (3, 11, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (4, 11, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (5, 11, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (6, 11, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
+       (7, 11, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE')
+
+

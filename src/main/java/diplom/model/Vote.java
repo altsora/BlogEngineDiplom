@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "post_votes")
+@Table(name = "votes")
 @Data
 public class Vote {
     private long id;

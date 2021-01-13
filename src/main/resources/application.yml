@@ -7,6 +7,15 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: false
+#    show-sql: true
+
+logging:
+  level:
+    org.hibernate.type: INFO
+#    org.hibernate.type: TRACE
+
+post:
+  maxAnnounceSize: 200
 
 blog:
   title: DevPub
@@ -14,4 +23,4 @@ blog:
   phone: +7 123 456-78-90
   email: altsora@amatera.su
   copyright: Александр Вергун
-  copyrightFrom: 2019
+  copyrightFrom: 2021

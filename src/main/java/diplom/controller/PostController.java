@@ -1,7 +1,8 @@
 package diplom.controller;
 
+import diplom.response.PublicPostsResponse;
+import diplom.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,16 +12,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/post")
 public class PostController {
+    private final PostService postService;
 
     //------------------------------------------------------------------------------------------------------------------
 
     @GetMapping
-    public ResponseEntity getAllPosts(
+    public PublicPostsResponse getAllPosts(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "limit") int limit,
             @RequestParam(value = "mode") String mode
     ) {
-
-        return null;
+        return postService.getAllPosts(offset, limit, mode);
     }
+
+
+
+
+
 }
