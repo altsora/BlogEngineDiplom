@@ -1,11 +1,15 @@
 package diplom.service;
 
+import diplom.enums.ActivityStatus;
+import diplom.enums.ModerationStatus;
 import diplom.enums.Rating;
 import diplom.model.Post;
 import diplom.repository.PostRepository;
+import diplom.response.CalendarResponse;
 import diplom.response.PostResponse;
 import diplom.response.PublicPostsResponse;
 import diplom.response.UserSimpleResponse;
+import diplom.utils.TimeCountWrapper;
 import diplom.utils.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
@@ -15,9 +19,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static diplom.enums.ActivityStatus.ACTIVE;
 import static diplom.enums.ModerationStatus.ACCEPTED;
@@ -64,11 +71,37 @@ public class PostService {
         }
 
         List<PostResponse> posts = getPostResponses(postListRep);
-        return PublicPostsResponse.builder()
-                .count(count)
-                .posts(posts)
-                .build();
+        return PublicPostsResponse.builder().count(count).posts(posts).build();
     }
+
+    public PublicPostsResponse searchPostsByQuery(int offset, int limit, String query) {
+        Sort sort = Sort.by(Sort.Direction.DESC, PostRepository.POST_TIME);
+        PageRequest pageable = PageRequest.of(offset / limit, limit, sort);
+        List<Post> postListRep = query.isEmpty() ?
+                postRepository.findPostsSortedByDate(ACTIVE, ACCEPTED, pageable):
+                postRepository.findPostsByQuery(ACTIVE, ACCEPTED, query, pageable);
+
+        List<PostResponse> posts = getPostResponses(postListRep);
+        int count = query.isEmpty() ?
+                postRepository.getTotalCountOfPosts(ACTIVE, ACCEPTED):
+                postRepository.getCountPostsByQuery(ACTIVE, ACCEPTED, query);
+
+        return PublicPostsResponse.builder().count(count).posts(posts).build();
+    }
+
+    public CalendarResponse getCalendar(Integer year) {
+        if (year == null) year = LocalDateTime.now().getYear();
+        List<Integer> years = postRepository.findYearsOfPublication(ACTIVE, ACCEPTED);
+        int currentYear = LocalDateTime.now().getYear();
+        if (!years.contains(currentYear)) years.add(0, currentYear);
+        List<TimeCountWrapper> timeAndCountPosts = postRepository.getTimeAndCountPosts(ACTIVE, ACCEPTED, year);
+        Map<String, Long> posts = timeAndCountPosts.stream()
+                .collect(Collectors.toMap(TimeCountWrapper::getTime, TimeCountWrapper::getCount));
+        return CalendarResponse.builder().years(years).posts(posts).build();
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
 
     private List<PostResponse> getPostResponses(List<Post> postListRep) {
         List<PostResponse> posts = new ArrayList<>();
@@ -94,8 +127,14 @@ public class PostService {
         return posts;
     }
 
+    private void getTimeAndCountPosts(ActivityStatus activityStatus, ModerationStatus moderationStatus, int year) {
+
+    }
+
     private String getAnnounce(String text) {
         String announce = Jsoup.parse(text).text();
         return announce.length() > maxAnnounceSize ? announce.substring(0, maxAnnounceSize) : announce;
     }
+
+
 }

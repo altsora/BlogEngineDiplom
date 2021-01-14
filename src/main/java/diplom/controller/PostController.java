@@ -25,8 +25,14 @@ public class PostController {
         return postService.getAllPosts(offset, limit, mode);
     }
 
-
-
+    @GetMapping("/search")
+    public PublicPostsResponse searchPostsByQuery(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit") int limit,
+            @RequestParam(value = "query") String query
+    ) {
+        return postService.searchPostsByQuery(offset, limit, query);
+    }
 
 
 }
