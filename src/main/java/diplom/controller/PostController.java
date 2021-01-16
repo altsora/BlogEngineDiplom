@@ -34,5 +34,22 @@ public class PostController {
         return postService.searchPostsByQuery(offset, limit, query);
     }
 
+    @GetMapping("/byDate")
+    public PublicPostsResponse searchPostsByDate(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit") int limit,
+            @RequestParam(value = "date") String date
+    ) {
+        return postService.searchPostsByDate(offset, limit, date);
+    }
+
+    @GetMapping("/byTag")
+    public PublicPostsResponse searchPostsByTag(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit") int limit,
+            @RequestParam(value = "tag") String tag
+    ) {
+        return postService.searchPostsByTag(offset, limit, tag);
+    }
 
 }

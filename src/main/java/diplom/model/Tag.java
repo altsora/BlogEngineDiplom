@@ -16,7 +16,8 @@ import java.util.Set;
 public class Tag {
     private long id;
     private String name;
-    private Set<Tag2Post> posts;
+
+    private Set<Post> posts;
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -27,8 +28,8 @@ public class Tag {
     }
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "tag")
-    public Set<Tag2Post> getPosts() {
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    public Set<Post> getPosts() {
         return posts;
     }
 }

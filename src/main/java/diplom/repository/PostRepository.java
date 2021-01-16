@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-@Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     String COUNT_COMMENTS = "countComments";
     String POST_TIME = "time";
@@ -30,7 +29,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "   p.activityStatus = :activityStatus AND " +
             "   p.moderationStatus = :moderationStatus AND " +
             "   p.time <= NOW()")
-    int getTotalCountOfPosts(
+    int countPosts(
             @Param("activityStatus") ActivityStatus activityStatus,
             @Param("moderationStatus") ModerationStatus moderationStatus
     );
@@ -121,5 +120,57 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("activityStatus") ActivityStatus activityStatus,
             @Param("moderationStatus") ModerationStatus moderationStatus,
             @Param("year") int year
+    );
+
+    @Query("SELECT p FROM Post p " +
+            "WHERE " +
+            "   p.activityStatus = :activityStatus AND " +
+            "   p.moderationStatus = :moderationStatus AND " +
+            "   DATE_FORMAT(p.time, '%Y-%m-%d') = :date " +
+            "ORDER BY p.time DESC")
+    List<Post> findPostsByDate(
+            @Param("activityStatus") ActivityStatus activityStatus,
+            @Param("moderationStatus") ModerationStatus moderationStatus,
+            @Param("date") String date,
+            Pageable pageable
+    );
+
+    @Query("SELECT COUNT(p) FROM Post p " +
+            "WHERE " +
+            "   p.activityStatus = :activityStatus AND " +
+            "   p.moderationStatus = :moderationStatus AND " +
+            "   DATE_FORMAT(p.time, '%Y-%m-%d') = :date")
+    int countPostsByDate(
+            @Param("activityStatus") ActivityStatus activityStatus,
+            @Param("moderationStatus") ModerationStatus moderationStatus,
+            @Param("date") String date
+    );
+
+    @Query("SELECT p FROM Post p " +
+            "JOIN p.tags t " +
+            "WHERE " +
+            "   p.activityStatus = :activityStatus AND " +
+            "   p.moderationStatus = :moderationStatus AND " +
+            "   p.time <= NOW() AND " +
+            "   t.name = :tag " +
+            "ORDER BY p.time DESC")
+    List<Post> findPostsByTag(
+            @Param("activityStatus") ActivityStatus activityStatus,
+            @Param("moderationStatus") ModerationStatus moderationStatus,
+            @Param("tag") String tag,
+            Pageable pageable
+    );
+
+    @Query("SELECT COUNT(p) FROM Post p " +
+            "JOIN p.tags t " +
+            "WHERE " +
+            "   p.activityStatus = :activityStatus AND " +
+            "   p.moderationStatus = :moderationStatus AND " +
+            "   p.time <= NOW() AND " +
+            "   t.name = :tag")
+    int countPostsByTag(
+            @Param("activityStatus") ActivityStatus activityStatus,
+            @Param("moderationStatus") ModerationStatus moderationStatus,
+            @Param("tag") String tag
     );
 }

@@ -3,6 +3,7 @@ package diplom.repository;
 import diplom.Application;
 import diplom.enums.Rating;
 import diplom.model.Post;
+import diplom.model.Tag;
 import diplom.utils.TimeCountWrapper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,9 +15,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static diplom.enums.ActivityStatus.ACTIVE;
@@ -36,7 +39,7 @@ public class PostRepositoryTest {
 
     @Test
     public void getTotalCountOfPosts() {
-        int actual = postRepository.getTotalCountOfPosts(ACTIVE, ACCEPTED);
+        int actual = postRepository.countPosts(ACTIVE, ACCEPTED);
         Assert.assertEquals(14, actual);
     }
 
@@ -87,8 +90,8 @@ public class PostRepositoryTest {
         Assert.assertEquals(17, postsSortedByDate.get(1).getId());
         Assert.assertEquals(16, postsSortedByDate.get(2).getId());
         Assert.assertEquals(15, postsSortedByDate.get(3).getId());
-        Assert.assertEquals(13, postsSortedByDate.get(4).getId());
-        Assert.assertEquals(14, postsSortedByDate.get(5).getId());
+        Assert.assertEquals(14, postsSortedByDate.get(4).getId());
+        Assert.assertEquals(13, postsSortedByDate.get(5).getId());
         Assert.assertEquals(12, postsSortedByDate.get(6).getId());
         Assert.assertEquals(11, postsSortedByDate.get(7).getId());
         Assert.assertEquals(10, postsSortedByDate.get(8).getId());
@@ -188,10 +191,68 @@ public class PostRepositoryTest {
 
     @Test
     public void getTimeAndCountPostsTest() {
-        List<TimeCountWrapper> timeAndCountPosts = postRepository.getTimeAndCountPosts(ACTIVE, ACCEPTED, 2016);
+        List<TimeCountWrapper> timeAndCountPosts = postRepository.getTimeAndCountPosts(ACTIVE, ACCEPTED, 2018);
         timeAndCountPosts.forEach(System.out::println);
+        Assert.assertEquals(2, timeAndCountPosts.size());
         Map<String, Long> posts = timeAndCountPosts.stream()
-                .collect(Collectors.toMap(w -> w.getTime().toString(), TimeCountWrapper::getCount));
-        posts.forEach((k, v) -> System.out.println("Key: " + k + ", Value: " + v));
+                .collect(Collectors.toMap(TimeCountWrapper::getTime, TimeCountWrapper::getCount));
+        posts.forEach((k, v) -> System.out.println("Post time: " + k + ", Count: " + v));
+    }
+
+    @Test
+    public void findPostsByDateTest() {
+        int expected = 2;
+        String date = "2016-09-09";
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Post> posts = postRepository.findPostsByDate(ACTIVE, ACCEPTED, date, pageable);
+        posts.forEach(System.out::println);
+        Assert.assertNotNull(posts);
+        Assert.assertEquals(expected, posts.size());
+
+        int count = postRepository.countPostsByDate(ACTIVE, ACCEPTED, date);
+        Assert.assertEquals(expected, count);
+
+        LocalDateTime timeFirst = posts.get(0).getTime();
+        LocalDateTime timeSecond = posts.get(1).getTime();
+        Assert.assertTrue(timeFirst.isAfter(timeSecond));
+    }
+
+    @Test
+    @Transactional
+    public void PostManyToManyTagTest() {
+        Post post = postRepository.findById(3L).get();
+        Assert.assertNotNull(post);
+        Set<Tag> tags = post.getTags();
+        System.out.println("post.getId() = " + post.getId());
+        System.out.println("post.getTags().size() = " + tags.size());
+        System.out.println("post.getTags() = " + tags);
+        Assert.assertNotNull(tags);
+        Assert.assertFalse(tags.isEmpty());
+        Assert.assertEquals(3, tags.size());
+    }
+
+    @Test
+    @Transactional
+    public void findPostsByTag() {
+        String tag = "Java";
+        int expected = 10;
+
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Post> posts = postRepository.findPostsByTag(ACTIVE, ACCEPTED, tag, pageable);
+        Assert.assertNotNull(posts);
+        System.out.println("tag = " + tag);
+        System.out.println("posts.size() = " + posts.size());
+        posts.forEach(post -> {
+            System.out.println("PostId: " + post.getId());
+            Set<Tag> tags = post.getTags();
+            tags.forEach(t -> System.out.println("\tTagId: " + t.getId() + ", name" + t.getName()));
+            // Проверка, что загружаются все тэги для поста, а не только указанный
+            if (post.getId() == 1) {
+                Assert.assertEquals(6, tags.size());
+            }
+        });
+        Assert.assertEquals(expected, posts.size());
+        int count = postRepository.countPostsByTag(ACTIVE, ACCEPTED, tag);
+        Assert.assertEquals(expected, count);
     }
 }

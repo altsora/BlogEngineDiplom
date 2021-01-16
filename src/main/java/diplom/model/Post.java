@@ -15,8 +15,8 @@ import java.util.Set;
 @Entity
 @Table(name = "posts")
 @Data
-@ToString(exclude = {"comments"})
-@EqualsAndHashCode(exclude = {"comments"})
+@ToString(exclude = {"comments", "tags"})
+@EqualsAndHashCode(exclude = {"comments", "tags"})
 public class Post {
     private long id;
     private ActivityStatus activityStatus;
@@ -29,6 +29,7 @@ public class Post {
     private int viewCount;
 
     private Set<Comment> comments;
+    private Set<Tag> tags;
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -83,5 +84,14 @@ public class Post {
     @OneToMany(mappedBy = "post")
     public Set<Comment> getComments() {
         return comments;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "tag2post",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    public Set<Tag> getTags() {
+        return tags;
     }
 }

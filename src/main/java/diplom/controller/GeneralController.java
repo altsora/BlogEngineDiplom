@@ -2,8 +2,10 @@ package diplom.controller;
 
 import diplom.response.Blog;
 import diplom.response.CalendarResponse;
+import diplom.response.ResultResponse;
 import diplom.service.GlobalSettingService;
 import diplom.service.PostService;
+import diplom.service.TagService;
 import diplom.utils.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +28,8 @@ public class GeneralController {
     private final Blog blog;
     private final GlobalSettingService globalSettingService;
     private final PostService postService;
+    private final TagService tagService;
+
     //------------------------------------------------------------------------------------------------------------------
 
     @GetMapping("init")
@@ -33,6 +37,7 @@ public class GeneralController {
         return blog;
     }
 
+    //TODO: вынести в сервис
     @GetMapping("/settings")
     public Map<String, Boolean> getSettings() {
         Map<String, Boolean> map = new HashMap<>();
@@ -50,7 +55,7 @@ public class GeneralController {
     }
 
     @GetMapping(value = "/tag")
-    public String getTagList() {
-        return null;
+    public ResultResponse getTagList(@RequestParam(value = "query", required = false) String query) {
+        return tagService.getTagList(query);
     }
 }

@@ -16,7 +16,6 @@ import org.jsoup.Jsoup;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -42,7 +41,7 @@ public class PostService {
     public PublicPostsResponse getAllPosts(int offset, int limit, String mode) {
         List<Post> postListRep;
         int pageNumber = offset / limit;
-        int count = postRepository.getTotalCountOfPosts(ACTIVE, ACCEPTED);
+        int count = postRepository.countPosts(ACTIVE, ACCEPTED);
         Sort sort;
         Pageable pageable;
         switch (mode) {
@@ -78,12 +77,12 @@ public class PostService {
         Sort sort = Sort.by(Sort.Direction.DESC, PostRepository.POST_TIME);
         PageRequest pageable = PageRequest.of(offset / limit, limit, sort);
         List<Post> postListRep = query.isEmpty() ?
-                postRepository.findPostsSortedByDate(ACTIVE, ACCEPTED, pageable):
+                postRepository.findPostsSortedByDate(ACTIVE, ACCEPTED, pageable) :
                 postRepository.findPostsByQuery(ACTIVE, ACCEPTED, query, pageable);
 
         List<PostResponse> posts = getPostResponses(postListRep);
         int count = query.isEmpty() ?
-                postRepository.getTotalCountOfPosts(ACTIVE, ACCEPTED):
+                postRepository.countPosts(ACTIVE, ACCEPTED) :
                 postRepository.getCountPostsByQuery(ACTIVE, ACCEPTED, query);
 
         return PublicPostsResponse.builder().count(count).posts(posts).build();
@@ -100,8 +99,34 @@ public class PostService {
         return CalendarResponse.builder().years(years).posts(posts).build();
     }
 
+    public PublicPostsResponse searchPostsByDate(int offset, int limit, String date) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        List<Post> postListRep = postRepository.findPostsByDate(ACTIVE, ACCEPTED, date, pageable);
+        List<PostResponse> posts = getPostResponses(postListRep);
+        int count = postRepository.countPostsByDate(ACTIVE, ACCEPTED, date);
+        return PublicPostsResponse.builder().count(count).posts(posts).build();
+    }
+
+    //TODO: проверить поиск постов по тэгу
+    public PublicPostsResponse searchPostsByTag(int offset, int limit, String tag) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        List<Post> postListRep = postRepository.findPostsByTag(ACTIVE, ACCEPTED, tag, pageable);
+        List<PostResponse> posts = getPostResponses(postListRep);
+        int count = postRepository.countPostsByTag(ACTIVE, ACCEPTED, tag);
+        return PublicPostsResponse.builder().count(count).posts(posts).build();
+    }
+
     //------------------------------------------------------------------------------------------------------------------
 
+    public int countPosts(ActivityStatus activityStatus, ModerationStatus moderationStatus) {
+        return postRepository.countPosts(activityStatus, moderationStatus);
+    }
+
+    public int countPostsByTag(String tag) {
+        return postRepository.countPostsByTag(ACTIVE, ACCEPTED, tag);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
 
     private List<PostResponse> getPostResponses(List<Post> postListRep) {
         List<PostResponse> posts = new ArrayList<>();
@@ -125,10 +150,6 @@ public class PostService {
             posts.add(postResponse);
         }
         return posts;
-    }
-
-    private void getTimeAndCountPosts(ActivityStatus activityStatus, ModerationStatus moderationStatus, int year) {
-
     }
 
     private String getAnnounce(String text) {
