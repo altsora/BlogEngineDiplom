@@ -81,7 +81,7 @@ public class Post {
     }
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     public Set<Comment> getComments() {
         return comments;
     }
@@ -94,4 +94,6 @@ public class Post {
     public Set<Tag> getTags() {
         return tags;
     }
+
+    //------------------------------------------------------------------------------------------------------------------
 }

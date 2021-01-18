@@ -1,12 +1,11 @@
 package diplom.controller;
 
+import diplom.response.CurrentPostResponse;
 import diplom.response.PublicPostsResponse;
 import diplom.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,6 +49,11 @@ public class PostController {
             @RequestParam(value = "tag") String tag
     ) {
         return postService.searchPostsByTag(offset, limit, tag);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CurrentPostResponse> getPostById(@PathVariable(value = "id") long id) {
+        return postService.getPostById(id);
     }
 
 }

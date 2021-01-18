@@ -18,4 +18,12 @@ public class GlobalSetting {
     private String name;
     @Enumerated(EnumType.STRING)
     private SettingValue value;
+
+    public boolean enabled() {
+        return value == SettingValue.YES;
+    }
+
+    public String getCodeName() {
+        return code.name();
+    }
 }

@@ -54,4 +54,8 @@ public class TagService {
         return ResultResponse.builder().tags(tags).build();
     }
 
+    public List<String> getTagsByPost() {
+        return null;
+    }
+
 }

@@ -4,11 +4,9 @@ import diplom.enums.ActivityStatus;
 import diplom.enums.ModerationStatus;
 import diplom.enums.Rating;
 import diplom.model.Post;
+import diplom.model.Tag;
 import diplom.repository.PostRepository;
-import diplom.response.CalendarResponse;
-import diplom.response.PostResponse;
-import diplom.response.PublicPostsResponse;
-import diplom.response.UserSimpleResponse;
+import diplom.response.*;
 import diplom.utils.TimeCountWrapper;
 import diplom.utils.TimeUtil;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +14,12 @@ import org.jsoup.Jsoup;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static diplom.enums.ActivityStatus.ACTIVE;
@@ -107,13 +104,39 @@ public class PostService {
         return PublicPostsResponse.builder().count(count).posts(posts).build();
     }
 
-    //TODO: проверить поиск постов по тэгу
     public PublicPostsResponse searchPostsByTag(int offset, int limit, String tag) {
         Pageable pageable = PageRequest.of(offset / limit, limit);
         List<Post> postListRep = postRepository.findPostsByTag(ACTIVE, ACCEPTED, tag, pageable);
         List<PostResponse> posts = getPostResponses(postListRep);
         int count = postRepository.countPostsByTag(ACTIVE, ACCEPTED, tag);
         return PublicPostsResponse.builder().count(count).posts(posts).build();
+    }
+
+    public ResponseEntity<CurrentPostResponse> getPostById(long id) {
+        Optional<Post> optionalPost = postRepository.findById(id);
+        if (optionalPost.isEmpty()) return ResponseEntity.notFound().build();
+        Post postRep = optionalPost.get();
+        //TODO проверка аутентификации, увеличение числа просмотров
+        long postId = postRep.getId();
+        long userId = postRep.getUser().getId();
+        String userName = postRep.getUser().getName();
+        long timestamp = TimeUtil.getTimestamp(postRep.getTime());
+        List<String> tags = postRep.getTags().stream().map(Tag::getName).collect(Collectors.toList());
+
+        CurrentPostResponse post = CurrentPostResponse.builder()
+                .id(postId)
+                .timestamp(timestamp)
+                .active(postRep.getActivityStatus() == ACTIVE)
+                .user(UserSimpleResponse.builder().id(userId).name(userName).build())
+                .title(postRep.getTitle())
+                .text(postRep.getText())
+                .likeCount(voteService.getCountLikesByPost(postRep))
+                .dislikeCount(voteService.getCountDislikeByPost(postRep))
+                .viewCount(postRep.getViewCount())
+                .comments(commentService.getCommentResponseByPost(postRep))
+                .tags(tags)
+                .build();
+        return ResponseEntity.ok(post);
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -134,7 +157,7 @@ public class PostService {
             long postId = postRep.getId();
             long userId = postRep.getUser().getId();
             String userName = postRep.getUser().getName();
-            long timestamp = TimeUtil.getTimestampFromLocalDateTime(postRep.getTime());
+            long timestamp = TimeUtil.getTimestamp(postRep.getTime());
 
             PostResponse postResponse = PostResponse.builder()
                     .id(postId)
@@ -154,8 +177,11 @@ public class PostService {
 
     private String getAnnounce(String text) {
         String announce = Jsoup.parse(text).text();
-        return announce.length() > maxAnnounceSize ? announce.substring(0, maxAnnounceSize) : announce;
+        return announce.length() > maxAnnounceSize ?
+                announce.substring(0, maxAnnounceSize) + "...":
+                announce;
     }
+
 
 
 }

@@ -6,7 +6,7 @@ public final class TimeUtil {
     public static final ZoneId TIME_ZONE = ZoneId.of("UTC");
     public static final ZoneOffset ZONE_OFFSET = ZoneOffset.UTC;
 
-    public static long getTimestampFromLocalDateTime(LocalDateTime localDateTime) {
+    public static long getTimestamp(LocalDateTime localDateTime) {
         return localDateTime.toInstant(ZONE_OFFSET).getEpochSecond();
     }
 

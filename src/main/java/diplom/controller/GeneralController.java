@@ -37,16 +37,9 @@ public class GeneralController {
         return blog;
     }
 
-    //TODO: вынести в сервис
     @GetMapping("/settings")
     public Map<String, Boolean> getSettings() {
-        Map<String, Boolean> map = new HashMap<>();
-        globalSettingService.findAll().forEach(setting -> {
-            String code = setting.getCode().name();
-            boolean enable = setting.getValue() == YES;
-            map.put(code, enable);
-        });
-        return map;
+        return globalSettingService.getSettings();
     }
 
     @GetMapping("calendar")

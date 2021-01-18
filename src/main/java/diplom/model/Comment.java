@@ -13,8 +13,8 @@ import java.util.Set;
 @Entity
 @Table(name = "comments")
 @Data
-@ToString(exclude = {"children"})
-@EqualsAndHashCode(exclude = {"children"})
+@ToString(exclude = {"children", "parent"})
+@EqualsAndHashCode(exclude = {"children", "parent"})
 public class Comment {
     private long id;
     private Comment parent;

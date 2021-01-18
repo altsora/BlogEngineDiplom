@@ -255,4 +255,14 @@ public class PostRepositoryTest {
         int count = postRepository.countPostsByTag(ACTIVE, ACCEPTED, tag);
         Assert.assertEquals(expected, count);
     }
+
+    @Test
+    @Transactional
+    public void getTagsLikeArrayTest() {
+        Post post = postRepository.getOne(1L);
+        Set<Tag> tags = post.getTags();
+        List<String> tagList = tags.stream().map(Tag::getName).collect(Collectors.toList());
+        System.out.println(tagList);
+        Assert.assertTrue(true);
+    }
 }
