@@ -1,21 +1,16 @@
 package diplom.repository;
 
-import diplom.enums.ActivityStatus;
-import diplom.enums.ModerationStatus;
-import diplom.enums.Rating;
+import diplom.model.enums.ActivityStatus;
+import diplom.model.enums.ModerationStatus;
+import diplom.model.enums.Rating;
 import diplom.model.Post;
 import diplom.utils.TimeCountWrapper;
-import org.apache.tomcat.jni.Local;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     String COUNT_COMMENTS = "countComments";

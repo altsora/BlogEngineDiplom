@@ -18,8 +18,8 @@ post:
   maxAnnounceSize: 200
 
 blog:
-  title: DevPub
-  subtitle: Developer Stories
+  title: Паблик на локалхосте
+  subtitle: Истории уровня /b #Developer Stories
   phone: +7 123 456-78-90
   email: altsora@amatera.su
   copyright: Александр Вергун

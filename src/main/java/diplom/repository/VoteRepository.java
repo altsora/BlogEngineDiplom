@@ -1,6 +1,6 @@
 package diplom.repository;
 
-import diplom.enums.Rating;
+import diplom.model.enums.Rating;
 import diplom.model.Post;
 import diplom.model.Vote;
 import org.springframework.data.jpa.repository.JpaRepository;

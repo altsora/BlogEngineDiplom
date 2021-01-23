@@ -1,6 +1,7 @@
 package diplom.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import diplom.model.enums.Role;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -61,5 +62,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     public Set<Comment> getComments() {
         return comments;
+    }
+
+    @Transient
+    public Role getRole() {
+        return isModerator ? Role.MODERATOR : Role.USER;
     }
 }

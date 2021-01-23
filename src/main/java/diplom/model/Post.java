@@ -2,8 +2,8 @@ package diplom.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import diplom.enums.ActivityStatus;
-import diplom.enums.ModerationStatus;
+import diplom.model.enums.ActivityStatus;
+import diplom.model.enums.ModerationStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

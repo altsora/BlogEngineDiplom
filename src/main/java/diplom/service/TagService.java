@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static diplom.enums.ActivityStatus.ACTIVE;
-import static diplom.enums.ModerationStatus.ACCEPTED;
+import static diplom.model.enums.ActivityStatus.ACTIVE;
+import static diplom.model.enums.ModerationStatus.ACCEPTED;
 
 @Service
 @RequiredArgsConstructor

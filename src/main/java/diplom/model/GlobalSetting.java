@@ -1,7 +1,7 @@
 package diplom.model;
 
-import diplom.enums.SettingCode;
-import diplom.enums.SettingValue;
+import diplom.model.enums.SettingCode;
+import diplom.model.enums.SettingValue;
 import lombok.Data;
 
 import javax.persistence.*;

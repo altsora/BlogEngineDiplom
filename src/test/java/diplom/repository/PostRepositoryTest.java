@@ -1,7 +1,7 @@
 package diplom.repository;
 
 import diplom.Application;
-import diplom.enums.Rating;
+import diplom.model.enums.Rating;
 import diplom.model.Post;
 import diplom.model.Tag;
 import diplom.utils.TimeCountWrapper;
@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static diplom.enums.ActivityStatus.ACTIVE;
-import static diplom.enums.ModerationStatus.ACCEPTED;
+import static diplom.model.enums.ActivityStatus.ACTIVE;
+import static diplom.model.enums.ModerationStatus.ACCEPTED;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)

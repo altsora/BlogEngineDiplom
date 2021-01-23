@@ -1,4 +1,4 @@
-package diplom.enums;
+package diplom.model.enums;
 
 public enum ModerationStatus {
     NEW,

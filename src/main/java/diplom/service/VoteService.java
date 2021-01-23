@@ -1,6 +1,6 @@
 package diplom.service;
 
-import diplom.enums.Rating;
+import diplom.model.enums.Rating;
 import diplom.model.Post;
 import diplom.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;

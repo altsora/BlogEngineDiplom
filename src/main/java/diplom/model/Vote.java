@@ -1,7 +1,7 @@
 package diplom.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import diplom.enums.Rating;
+import diplom.model.enums.Rating;
 import lombok.Data;
 
 import javax.persistence.*;

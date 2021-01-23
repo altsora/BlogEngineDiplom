@@ -1,7 +1,7 @@
 package diplom.repository;
 
 import diplom.Application;
-import diplom.enums.Rating;
+import diplom.model.enums.Rating;
 import diplom.model.Post;
 import org.junit.Assert;
 import org.junit.Test;

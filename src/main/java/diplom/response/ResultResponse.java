@@ -9,8 +9,9 @@ import java.util.List;
 
 @Getter
 @Builder
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class ResultResponse {
     private boolean result;
     private List<TagResponse> tags;
+    private UserLoginResponse user;
 }

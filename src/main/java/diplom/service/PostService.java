@@ -1,8 +1,8 @@
 package diplom.service;
 
-import diplom.enums.ActivityStatus;
-import diplom.enums.ModerationStatus;
-import diplom.enums.Rating;
+import diplom.model.enums.ActivityStatus;
+import diplom.model.enums.ModerationStatus;
+import diplom.model.enums.Rating;
 import diplom.model.Post;
 import diplom.model.Tag;
 import diplom.repository.PostRepository;
@@ -17,13 +17,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static diplom.enums.ActivityStatus.ACTIVE;
-import static diplom.enums.ModerationStatus.ACCEPTED;
+import static diplom.model.enums.ActivityStatus.ACTIVE;
+import static diplom.model.enums.ModerationStatus.ACCEPTED;
 
 @Service
 @RequiredArgsConstructor
