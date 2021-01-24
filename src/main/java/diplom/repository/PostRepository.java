@@ -1,5 +1,6 @@
 package diplom.repository;
 
+import diplom.model.User;
 import diplom.model.enums.ActivityStatus;
 import diplom.model.enums.ModerationStatus;
 import diplom.model.enums.Rating;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -168,4 +170,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("moderationStatus") ModerationStatus moderationStatus,
             @Param("tag") String tag
     );
+
+    @Query(value = "SELECT IFNULL(SUM(p.view_count), 0) FROM posts p WHERE p.user_id = :userId", nativeQuery = true)
+    int getTotalViewCountByUser(@Param("userId") long userId);
+
+    @Query("SELECT SUM(p.viewCount) FROM Post p")
+    int getTotalViewCount();
+
+    @Query("SELECT MIN(p.time) FROM Post p")
+    LocalDateTime getTimeOfFirstPost();
 }

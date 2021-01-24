@@ -1,17 +1,17 @@
 package diplom.controller;
 
+import diplom.request.SettingsForm;
 import diplom.response.Blog;
 import diplom.response.CalendarResponse;
 import diplom.response.ResultResponse;
-import diplom.service.GlobalSettingService;
-import diplom.service.PostService;
-import diplom.service.TagService;
+import diplom.response.StatisticResponse;
+import diplom.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 
 
@@ -23,6 +23,8 @@ public class GeneralController {
     private final GlobalSettingService globalSettingService;
     private final PostService postService;
     private final TagService tagService;
+    private final GeneralService generalService;
+    private final AuthService authService;
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -36,6 +38,12 @@ public class GeneralController {
         return globalSettingService.getSettings();
     }
 
+    @PutMapping("/settings")
+    @PreAuthorize("hasAuthority('user:moderate')")
+    public ResponseEntity<String> setSettings(@RequestBody SettingsForm settingsForm) {
+        return globalSettingService.setSettings(settingsForm);
+    }
+
     @GetMapping("calendar")
     public CalendarResponse getCalendar(@RequestParam(value = "year", required = false) Integer year) {
         return postService.getCalendar(year);
@@ -44,5 +52,16 @@ public class GeneralController {
     @GetMapping(value = "/tag")
     public ResultResponse getTagList(@RequestParam(value = "query", required = false) String query) {
         return tagService.getTagList(query);
+    }
+
+    @GetMapping("/statistics/my")
+    @PreAuthorize("hasAuthority('user:write')")
+    public StatisticResponse getMyStatistics() {
+        return generalService.getMyStatistics();
+    }
+
+    @GetMapping("/statistics/all")
+    public ResponseEntity<StatisticResponse> getAllStatistics() {
+        return generalService.getAllStatistics();
     }
 }

@@ -30,7 +30,7 @@ VALUES (1, 1, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LI
        (12, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
        (13, 7, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'DISLIKE'),
 
-       (2, 8, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
+       (2, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
        (3, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
        (4, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),
        (5, 5, DATE_ADD(@start_time, INTERVAL FLOOR(RAND() * @value) SECOND), 'LIKE'),

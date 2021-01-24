@@ -1,6 +1,7 @@
 package diplom.repository;
 
 import diplom.Application;
+import diplom.model.User;
 import diplom.model.enums.Rating;
 import diplom.model.Post;
 import org.junit.Assert;
@@ -19,6 +20,9 @@ public class VoteRepositoryTest {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     public void init() {
@@ -41,5 +45,26 @@ public class VoteRepositoryTest {
         Assert.assertNotNull(post);
         int countDis = voteRepository.countByPostAndValue(post, Rating.DISLIKE);
         Assert.assertEquals(3, countDis);
+    }
+
+    @Test
+    public void countVotesByUserTest() {
+        User user = userRepository.getOne(1L);
+        int count = voteRepository.countByUserAndRating(user, Rating.LIKE);
+        Assert.assertEquals(13, count);
+        System.out.println("У пользователя id = 1 посты собрали 13 лайков");
+
+        User user2 = userRepository.getOne(3L);
+        int countDis = voteRepository.countByUserAndRating(user2, Rating.DISLIKE);
+        Assert.assertEquals(4, countDis);
+        System.out.println("У пользователя id = 3 посты собрали 4 дизлайка");
+    }
+
+    @Test
+    public void countLikesTest() {
+        int countDis = voteRepository.countVotesByValue(Rating.DISLIKE);
+        System.out.println("countDis = " + countDis);
+        int countLike = voteRepository.countVotesByValue(Rating.LIKE);
+        System.out.println("countLike = " + countLike);
     }
 }

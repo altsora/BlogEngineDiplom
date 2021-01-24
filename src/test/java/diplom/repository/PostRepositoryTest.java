@@ -1,9 +1,10 @@
 package diplom.repository;
 
 import diplom.Application;
-import diplom.model.enums.Rating;
 import diplom.model.Post;
 import diplom.model.Tag;
+import diplom.model.User;
+import diplom.model.enums.Rating;
 import diplom.utils.TimeCountWrapper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,6 +32,9 @@ public class PostRepositoryTest {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     public void repNotNull() {
@@ -264,5 +268,32 @@ public class PostRepositoryTest {
         List<String> tagList = tags.stream().map(Tag::getName).collect(Collectors.toList());
         System.out.println(tagList);
         Assert.assertTrue(true);
+    }
+
+    @Test
+    public void totalCountViewByUserTest() {
+        // есть посты
+        User user = userRepository.getOne(1L);
+        int count = postRepository.getTotalViewCountByUser(user.getId());
+        System.out.println(count);
+        Assert.assertEquals(10, count);
+
+        // нет постов
+        User user2 = userRepository.getOne(13L);
+        int count2 = postRepository.getTotalViewCountByUser(user2.getId());
+        System.out.println(count2);
+        Assert.assertEquals(0, count2);
+    }
+
+    @Test
+    @Transactional
+    public void getTimeOfFirstPostByUserTest() {
+        User user = userRepository.getOne(1L);
+        LocalDateTime time = user.getPosts().stream()
+                .map(Post::getTime)
+                .sorted()
+                .findFirst().orElse(null);
+        System.out.println(time);
+        Assert.assertNotNull(time);
     }
 }

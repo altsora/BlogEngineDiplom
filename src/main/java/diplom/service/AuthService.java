@@ -6,6 +6,7 @@ import diplom.request.LoginRequest;
 import diplom.response.ResultResponse;
 import diplom.response.UserLoginResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
@@ -26,7 +28,6 @@ public class AuthService {
     }
 
     public ResultResponse check(Principal principal) {
-        System.err.println("principal = " + principal);
         return authorized(principal) ?
                 getResultResponse(principal.getName()) :
                 ResultResponse.builder().result(false).build();
@@ -42,14 +43,27 @@ public class AuthService {
         }
 
         SecurityContextHolder.getContext().setAuthentication(auth);
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
-        return getResultResponse(securityUser.getUsername());
+        org.springframework.security.core.userdetails.User authorizedUser = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+        return getResultResponse(authorizedUser.getUsername());
     }
 
     public ResultResponse logout() {
         return ResultResponse.builder().result(true).build();
     }
 
+    public User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findUserByEmail(username).orElse(null);
+    }
+
+    public boolean currentUserIsModerator() {
+        User user = getCurrentUser();
+        return user != null && user.isModerator();
+    }
+
+    public boolean isAuthorized(Principal principal) {
+        return principal != null;
+    }
 
     public ResultResponse getResultResponse(String email) {
         diplom.model.User currentUser = userRepository.findUserByEmail(email)
@@ -67,10 +81,6 @@ public class AuthService {
                 .result(true)
                 .user(userLoginResponse)
                 .build();
-    }
-
-    public User getCurrentUser() {
-        return null;
     }
 
 

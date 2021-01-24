@@ -2,10 +2,10 @@ package diplom.controller;
 
 import diplom.response.CurrentPostResponse;
 import diplom.response.PublicPostsResponse;
+import diplom.service.AuthService;
 import diplom.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/post")
 public class PostController {
     private final PostService postService;
+    private final AuthService authService;
 
     //------------------------------------------------------------------------------------------------------------------
 

@@ -140,6 +140,10 @@ public class PostService {
 
     //------------------------------------------------------------------------------------------------------------------
 
+    public int countAvailablePosts() {
+        return countPosts(ACTIVE, ACCEPTED);
+    }
+
     public int countPosts(ActivityStatus activityStatus, ModerationStatus moderationStatus) {
         return postRepository.countPosts(activityStatus, moderationStatus);
     }
@@ -148,6 +152,17 @@ public class PostService {
         return postRepository.countPostsByTag(ACTIVE, ACCEPTED, tag);
     }
 
+    public int getCountViewByUserId(long userId) {
+        return postRepository.getTotalViewCountByUser(userId);
+    }
+
+    public int getViewCount() {
+        return postRepository.getTotalViewCount();
+    }
+
+    public LocalDateTime getTimeOfFirstPost() {
+        return postRepository.getTimeOfFirstPost();
+    }
     //------------------------------------------------------------------------------------------------------------------
 
     private List<PostResponse> getPostResponses(List<Post> postListRep) {
