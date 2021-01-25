@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.Random;
 
 @Log4j2
@@ -57,6 +58,11 @@ public class CaptchaService {
                 .minusMinutes(captchaLifeTimeMinutes);
         captchaCodeRepository.removeAllByTimeBefore(time);
         log.info("Старые капчи успешно удалены.");
+    }
+
+    public boolean isIncorrect(String captcha, String secretCode) {
+        Optional<CaptchaCode> captchaCode = captchaCodeRepository.getBySecret(secretCode);
+        return captchaCode.isPresent() && !captcha.equals(captchaCode.get().getCode());
     }
 
     //------------------------------------------------------------------------------------------------------------------

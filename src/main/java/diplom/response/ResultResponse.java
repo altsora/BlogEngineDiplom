@@ -14,4 +14,5 @@ public class ResultResponse {
     private boolean result;
     private List<TagResponse> tags;
     private UserLoginResponse user;
+    private ErrorResponse errors;
 }

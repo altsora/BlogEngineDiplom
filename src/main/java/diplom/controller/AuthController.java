@@ -7,9 +7,11 @@ import diplom.response.ResultResponse;
 import diplom.service.AuthService;
 import diplom.service.CaptchaService;
 import diplom.service.GlobalSettingService;
+import diplom.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -19,8 +21,8 @@ import java.security.Principal;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
-    private final GlobalSettingService globalSettingService;
     private final CaptchaService captchaService;
+    private final UserService userService;
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -36,7 +38,7 @@ public class AuthController {
 
     @GetMapping("/logout")
     @PreAuthorize("hasAuthority('user:write')")
-    public ResultResponse logout(Principal principal) {
+    public ResultResponse logout() {
         return authService.logout();
     }
 
@@ -47,20 +49,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ResultResponse> registration(@RequestBody RegisterForm form) {
-        System.err.println("Мы внутри регистрации!");
-        System.err.println(form);
-        if (!globalSettingService.multiuserModeEnabled()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        String email = form.getEmail();
-        String name = form.getName();
-        String password = form.getPassword();
-        String captcha = form.getCaptcha();
-        String captchaSecret = form.getCaptchaSecret();
-
-        //TODO
-        return null;
+        return userService.registration(form);
     }
 
 }
