@@ -17,6 +17,15 @@ logging:
 post:
   maxAnnounceSize: 200
 
+captcha:
+  hours: 2
+  minutes: 0
+  length: 3
+  width: 100
+  height: 35
+  imageEncoding: data:image/png;base64,
+  formatName: png
+
 blog:
   title: Паблик на локалхосте
   subtitle: Истории уровня /b #Developer Stories

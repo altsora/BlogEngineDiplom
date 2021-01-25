@@ -2,8 +2,10 @@ package diplom.controller;
 
 import diplom.request.LoginRequest;
 import diplom.request.RegisterForm;
+import diplom.response.CaptchaResponse;
 import diplom.response.ResultResponse;
 import diplom.service.AuthService;
+import diplom.service.CaptchaService;
 import diplom.service.GlobalSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.security.Principal;
 public class AuthController {
     private final AuthService authService;
     private final GlobalSettingService globalSettingService;
+    private final CaptchaService captchaService;
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -37,6 +40,11 @@ public class AuthController {
         return authService.logout();
     }
 
+    @GetMapping("/captcha")
+    public CaptchaResponse createCaptcha() {
+        return captchaService.createCaptcha();
+    }
+
     @PostMapping("/register")
     public ResponseEntity<ResultResponse> registration(@RequestBody RegisterForm form) {
         System.err.println("Мы внутри регистрации!");
@@ -44,6 +52,13 @@ public class AuthController {
         if (!globalSettingService.multiuserModeEnabled()) {
             return ResponseEntity.notFound().build();
         }
+
+        String email = form.getEmail();
+        String name = form.getName();
+        String password = form.getPassword();
+        String captcha = form.getCaptcha();
+        String captchaSecret = form.getCaptchaSecret();
+
         //TODO
         return null;
     }

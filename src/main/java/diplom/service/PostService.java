@@ -11,6 +11,7 @@ import diplom.utils.TimeCountWrapper;
 import diplom.utils.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,7 +31,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentService commentService;
     private final VoteService voteService;
-    private final int maxAnnounceSize;
+
+    @Value("${post.maxAnnounceSize}")
+    private int maxAnnounceSize;
 
     //------------------------------------------------------------------------------------------------------------------
 
