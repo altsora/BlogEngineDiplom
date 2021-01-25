@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static diplom.model.enums.ActivityStatus.ACTIVE;
+import static diplom.model.enums.ActivityStatus.INACTIVE;
 import static diplom.model.enums.ModerationStatus.ACCEPTED;
 
 @RunWith(SpringRunner.class)
@@ -295,5 +296,28 @@ public class PostRepositoryTest {
                 .findFirst().orElse(null);
         System.out.println(time);
         Assert.assertNotNull(time);
+    }
+
+    @Test
+    public void getHiddenPostsTest() {
+        User user = userRepository.getOne(3L);
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Post> posts = postRepository.findPostsByActivityStatusAndUser(INACTIVE, user, pageable);
+        Assert.assertNotNull(posts);
+        posts.forEach(System.out::println);
+        Assert.assertFalse(posts.isEmpty());
+        int count = postRepository.countPostsByActivityStatusAndUser(INACTIVE, user);
+        Assert.assertEquals(1, count);
+    }
+
+    @Test
+    public void getPostsBy_ActiveStatus_ModerationStatus_User() {
+        User user = userRepository.getOne(1L);
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Post> posts = postRepository.findByActivityStatusAndModerationStatusAndUser(ACTIVE, ACCEPTED, user, pageable);
+        Assert.assertNotNull(posts);
+        posts.forEach(System.out::println);
+        Assert.assertFalse(posts.isEmpty());
+
     }
 }

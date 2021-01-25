@@ -1,5 +1,6 @@
 package diplom.service;
 
+import diplom.model.User;
 import diplom.model.enums.ActivityStatus;
 import diplom.model.enums.ModerationStatus;
 import diplom.model.enums.Rating;
@@ -23,7 +24,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static diplom.model.enums.ActivityStatus.ACTIVE;
-import static diplom.model.enums.ModerationStatus.ACCEPTED;
+import static diplom.model.enums.ActivityStatus.INACTIVE;
+import static diplom.model.enums.ModerationStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentService commentService;
     private final VoteService voteService;
+    private final AuthService authService;
 
     @Value("${post.maxAnnounceSize}")
     private int maxAnnounceSize;
@@ -141,6 +144,37 @@ public class PostService {
         return ResponseEntity.ok(post);
     }
 
+    public PublicPostsResponse getMyPosts(int offset, int limit, String status) {
+        User user = authService.getCurrentUser();
+        int count;
+        List<Post> postListRep;
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        switch (status) {
+            case "inactive":
+                postListRep = postRepository.findPostsByActivityStatusAndUser(INACTIVE, user, pageable);
+                count = postRepository.countPostsByActivityStatusAndUser(INACTIVE, user);
+                break;
+            case "pending":
+                postListRep = postRepository.findByActivityStatusAndModerationStatusAndUser(ACTIVE, NEW, user, pageable);
+                count = postRepository.countByActivityStatusAndModerationStatusAndUser(ACTIVE, NEW, user);
+                break;
+            case "declined":
+                postListRep = postRepository.findByActivityStatusAndModerationStatusAndUser(ACTIVE, DECLINED, user, pageable);
+                count = postRepository.countByActivityStatusAndModerationStatusAndUser(ACTIVE, DECLINED, user);
+                break;
+            case "published":
+                postListRep = postRepository.findByActivityStatusAndModerationStatusAndUser(ACTIVE, ACCEPTED, user, pageable);
+                count = postRepository.countByActivityStatusAndModerationStatusAndUser(ACTIVE, ACCEPTED, user);
+                break;
+            default:
+                postListRep = Collections.emptyList();
+                count = 0;
+        }
+
+        List<PostResponse> posts = getPostResponses(postListRep);
+        return PublicPostsResponse.builder().posts(posts).count(count).build();
+    }
+
     //------------------------------------------------------------------------------------------------------------------
 
     public int countAvailablePosts() {
@@ -166,6 +200,7 @@ public class PostService {
     public LocalDateTime getTimeOfFirstPost() {
         return postRepository.getTimeOfFirstPost();
     }
+
     //------------------------------------------------------------------------------------------------------------------
 
     private List<PostResponse> getPostResponses(List<Post> postListRep) {

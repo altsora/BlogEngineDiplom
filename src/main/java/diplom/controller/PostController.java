@@ -6,6 +6,7 @@ import diplom.service.AuthService;
 import diplom.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -58,6 +59,16 @@ public class PostController {
     @GetMapping("/{id}")
     public ResponseEntity<CurrentPostResponse> getPostById(@PathVariable(value = "id") long id) {
         return postService.getPostById(id);
+    }
+
+    @GetMapping("/my")
+    @PreAuthorize("hasAuthority('user:write')")
+    public PublicPostsResponse getMyPosts(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "status") String status
+    ) {
+        return postService.getMyPosts(offset, limit, status);
     }
 
 }

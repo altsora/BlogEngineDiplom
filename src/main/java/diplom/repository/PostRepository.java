@@ -179,4 +179,21 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT MIN(p.time) FROM Post p")
     LocalDateTime getTimeOfFirstPost();
+
+    List<Post> findPostsByActivityStatusAndUser(ActivityStatus status, User user, Pageable pageable);
+
+    int countPostsByActivityStatusAndUser(ActivityStatus status, User user);
+
+    List<Post> findByActivityStatusAndModerationStatusAndUser(
+            ActivityStatus activityStatus,
+            ModerationStatus moderationStatus,
+            User user,
+            Pageable pageable
+    );
+
+    int countByActivityStatusAndModerationStatusAndUser(
+            ActivityStatus activityStatus,
+            ModerationStatus moderationStatus,
+            User user
+    );
 }
