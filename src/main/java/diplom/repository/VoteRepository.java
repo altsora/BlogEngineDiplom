@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Long> {
 
@@ -36,4 +38,6 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
     );
 
     int countVotesByValue(Rating value);
+
+    Optional<Vote> findByUserAndPost(User user, Post post);
 }

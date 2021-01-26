@@ -1,9 +1,13 @@
 package diplom.controller;
 
+import diplom.model.enums.Rating;
+import diplom.request.RatingForm;
 import diplom.response.CurrentPostResponse;
 import diplom.response.PublicPostsResponse;
+import diplom.response.ResultResponse;
 import diplom.service.AuthService;
 import diplom.service.PostService;
+import diplom.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,12 +18,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/post")
 public class PostController {
     private final PostService postService;
-    private final AuthService authService;
+    private final VoteService voteService;
 
     //------------------------------------------------------------------------------------------------------------------
 
     @GetMapping
-//    @PreAuthorize("hasAuthority('user:write')")
     public PublicPostsResponse getAllPosts(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "limit", defaultValue = "10") int limit,
@@ -29,7 +32,6 @@ public class PostController {
     }
 
     @GetMapping("/search")
-//    @PreAuthorize("hasAuthority('user:moderate')")
     public PublicPostsResponse searchPostsByQuery(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "limit", defaultValue = "10") int limit,
@@ -69,6 +71,18 @@ public class PostController {
             @RequestParam(value = "status") String status
     ) {
         return postService.getMyPosts(offset, limit, status);
+    }
+
+    @PostMapping("/like")
+    @PreAuthorize("hasAuthority('user:write')")
+    public ResultResponse putLike(@RequestBody RatingForm form) {
+        return voteService.put(Rating.LIKE, form.getPostId());
+    }
+
+    @PostMapping("/dislike")
+    @PreAuthorize("hasAuthority('user:write')")
+    public ResultResponse putDislike(@RequestBody RatingForm form) {
+        return voteService.put(Rating.DISLIKE, form.getPostId());
     }
 
 }

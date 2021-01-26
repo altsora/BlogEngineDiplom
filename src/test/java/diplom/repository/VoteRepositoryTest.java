@@ -2,6 +2,7 @@ package diplom.repository;
 
 import diplom.Application;
 import diplom.model.User;
+import diplom.model.Vote;
 import diplom.model.enums.Rating;
 import diplom.model.Post;
 import org.junit.Assert;
@@ -10,6 +11,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -66,5 +69,16 @@ public class VoteRepositoryTest {
         System.out.println("countDis = " + countDis);
         int countLike = voteRepository.countVotesByValue(Rating.LIKE);
         System.out.println("countLike = " + countLike);
+    }
+
+    @Test
+    public void getVoteByUserAndPostTest() {
+        User user = userRepository.getOne(1L);
+        Post post = postRepository.getOne(1L);
+        Optional<Vote> voteOptional = voteRepository.findByUserAndPost(user, post);
+        Assert.assertTrue(voteOptional.isPresent());
+        Vote vote = voteOptional.get();
+        System.out.println("vote.getId() = " + vote.getId());
+        System.out.println("vote.getValue() = " + vote.getValue());
     }
 }
