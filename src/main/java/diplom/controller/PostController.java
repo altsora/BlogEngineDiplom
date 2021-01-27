@@ -5,7 +5,6 @@ import diplom.request.RatingForm;
 import diplom.response.CurrentPostResponse;
 import diplom.response.PublicPostsResponse;
 import diplom.response.ResultResponse;
-import diplom.service.AuthService;
 import diplom.service.PostService;
 import diplom.service.VoteService;
 import lombok.RequiredArgsConstructor;
@@ -83,6 +82,16 @@ public class PostController {
     @PreAuthorize("hasAuthority('user:write')")
     public ResultResponse putDislike(@RequestBody RatingForm form) {
         return voteService.put(Rating.DISLIKE, form.getPostId());
+    }
+
+    @GetMapping("/moderation")
+    @PreAuthorize("hasAuthority('user:moderate')")
+    public PublicPostsResponse postsToPublish(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "status", defaultValue = "new") String status
+    ) {
+        return postService.postsToPublish(offset, limit, status);
     }
 
 }

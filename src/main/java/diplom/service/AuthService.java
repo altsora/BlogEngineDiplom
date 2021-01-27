@@ -61,8 +61,8 @@ public class AuthService {
         return user != null && user.isModerator();
     }
 
-    public boolean isAuthorized(Principal principal) {
-        return principal != null;
+    public boolean isAuthorized() {
+        return getCurrentUser() != null;
     }
 
     public ResultResponse getResultResponse(String email) {

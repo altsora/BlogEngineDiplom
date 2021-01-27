@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static diplom.model.enums.ActivityStatus.ACTIVE;
 import static diplom.model.enums.ActivityStatus.INACTIVE;
-import static diplom.model.enums.ModerationStatus.ACCEPTED;
+import static diplom.model.enums.ModerationStatus.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -318,6 +318,38 @@ public class PostRepositoryTest {
         Assert.assertNotNull(posts);
         posts.forEach(System.out::println);
         Assert.assertFalse(posts.isEmpty());
+    }
 
+    @Test
+    public void findPostsByModeratorAcceptedTest() {
+        User user = userRepository.getOne(1L);
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Post> posts = postRepository.findPostsByModerator(ACTIVE, ACCEPTED, user, pageable);
+        Assert.assertNotNull(posts);
+        posts.forEach(p -> System.out.println("ID: " + p.getId() + ", moderStatus: " + p.getModerationStatus()));
+        Assert.assertFalse(posts.isEmpty());
+    }
+
+    @Test
+    public void findPostsByModeratorDeclinedTest() {
+        User user = userRepository.getOne(1L);
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Post> posts = postRepository.findPostsByModerator(ACTIVE, DECLINED, user, pageable);
+        Assert.assertNotNull(posts);
+        posts.forEach(p -> System.out.println("ID: " + p.getId() + ", moderStatus: " + p.getModerationStatus()));
+        Assert.assertFalse(posts.isEmpty());
+        Assert.assertEquals(2, posts.size());
+    }
+
+    @Test
+    public void findPostsByModeratorNewTest() {
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Post> posts = postRepository.findByActivityStatusAndModerationStatus(ACTIVE, NEW, pageable);
+        Assert.assertNotNull(posts);
+        posts.forEach(p -> System.out.println("ID: " + p.getId() + ", moderStatus: " + p.getModerationStatus()));
+        Assert.assertFalse(posts.isEmpty());
+        Assert.assertEquals(1, posts.size());
+        int count = postRepository.countByActivityStatusAndModerationStatus(ACTIVE, NEW);
+        Assert.assertEquals(1, count);
     }
 }

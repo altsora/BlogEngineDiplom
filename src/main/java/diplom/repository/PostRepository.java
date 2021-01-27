@@ -196,4 +196,38 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             ModerationStatus moderationStatus,
             User user
     );
+
+    @Query("SELECT p FROM Post p " +
+            "WHERE " +
+            "   p.activityStatus = :activityStatus AND " +
+            "   p.moderationStatus = :moderationStatus AND " +
+            "   p.moderator = :moderator")
+    List<Post> findPostsByModerator(
+            @Param("activityStatus") ActivityStatus activityStatus,
+            @Param("moderationStatus") ModerationStatus moderationStatus,
+            @Param("moderator") User moderator,
+            Pageable pageable
+    );
+
+    @Query("SELECT COUNT(p) FROM Post p " +
+            "WHERE " +
+            "   p.activityStatus = :activityStatus AND " +
+            "   p.moderationStatus = :moderationStatus AND " +
+            "   p.moderator = :moderator")
+    int countPostsByModerator(
+            @Param("activityStatus") ActivityStatus activityStatus,
+            @Param("moderationStatus") ModerationStatus moderationStatus,
+            @Param("moderator") User moderator
+    );
+
+    List<Post> findByActivityStatusAndModerationStatus(
+            ActivityStatus activityStatus,
+            ModerationStatus moderationStatus,
+            Pageable pageable
+    );
+
+    int countByActivityStatusAndModerationStatus(
+            ActivityStatus activityStatus,
+            ModerationStatus moderationStatus
+    );
 }

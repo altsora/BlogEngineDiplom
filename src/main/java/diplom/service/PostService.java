@@ -122,14 +122,13 @@ public class PostService {
         if (optionalPost.isEmpty()) return ResponseEntity.notFound().build();
         Post postRep = optionalPost.get();
         //TODO проверка аутентификации, увеличение числа просмотров
-        long postId = postRep.getId();
         long userId = postRep.getUser().getId();
         String userName = postRep.getUser().getName();
         long timestamp = TimeUtil.getTimestamp(postRep.getTime());
         List<String> tags = postRep.getTags().stream().map(Tag::getName).collect(Collectors.toList());
 
         CurrentPostResponse post = CurrentPostResponse.builder()
-                .id(postId)
+                .id(postRep.getId())
                 .timestamp(timestamp)
                 .active(postRep.getActivityStatus() == ACTIVE)
                 .user(UserSimpleResponse.builder().id(userId).name(userName).build())
@@ -171,6 +170,32 @@ public class PostService {
                 count = 0;
         }
 
+        List<PostResponse> posts = getPostResponses(postListRep);
+        return PublicPostsResponse.builder().posts(posts).count(count).build();
+    }
+
+    public PublicPostsResponse postsToPublish(int offset, int limit, String status) {
+        User moderator = authService.getCurrentUser();
+        int count;
+        List<Post> postListRep;
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        switch (status) {
+            case "declined":
+                postListRep = postRepository.findPostsByModerator(ACTIVE, DECLINED, moderator, pageable);
+                count = postRepository.countPostsByModerator(ACTIVE, DECLINED, moderator);
+                break;
+            case "accepted":
+                postListRep = postRepository.findPostsByModerator(ACTIVE, ACCEPTED, moderator, pageable);
+                count = postRepository.countPostsByModerator(ACTIVE, ACCEPTED, moderator);
+                break;
+            case "new":
+                postListRep = postRepository.findByActivityStatusAndModerationStatus(ACTIVE, NEW, pageable);
+                count = postRepository.countByActivityStatusAndModerationStatus(ACTIVE, NEW);
+                break;
+            default:
+                postListRep = Collections.emptyList();
+                count = 0;
+        }
         List<PostResponse> posts = getPostResponses(postListRep);
         return PublicPostsResponse.builder().posts(posts).count(count).build();
     }
@@ -230,10 +255,9 @@ public class PostService {
     private String getAnnounce(String text) {
         String announce = Jsoup.parse(text).text();
         return announce.length() > maxAnnounceSize ?
-                announce.substring(0, maxAnnounceSize) + "...":
+                announce.substring(0, maxAnnounceSize) + "..." :
                 announce;
     }
-
 
 
 }
