@@ -1,6 +1,9 @@
 package diplom.service;
 
 import diplom.model.User;
+import diplom.model.enums.ActivityStatus;
+import diplom.model.enums.ModerationStatus;
+import diplom.repository.PostRepository;
 import diplom.repository.UserRepository;
 import diplom.request.LoginRequest;
 import diplom.response.ResultResponse;
@@ -22,6 +25,7 @@ import java.security.Principal;
 public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
     public boolean authorized(Principal principal) {
         return principal != null;
@@ -68,13 +72,14 @@ public class AuthService {
     public ResultResponse getResultResponse(String email) {
         diplom.model.User currentUser = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email));
+        int moderationCount = postRepository.countByActivityStatusAndModerationStatus(ActivityStatus.ACTIVE, ModerationStatus.NEW);
         UserLoginResponse userLoginResponse = UserLoginResponse.builder()
                 .id(currentUser.getId())
                 .name(currentUser.getName())
                 .photo(currentUser.getPhoto())
                 .email(currentUser.getEmail())
                 .moderation(currentUser.isModerator())
-                .moderationCount(0) //TODO: нужен подсчёт
+                .moderationCount(moderationCount)
                 .build();
 
         return ResultResponse.builder()

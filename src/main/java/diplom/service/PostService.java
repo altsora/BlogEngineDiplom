@@ -7,10 +7,13 @@ import diplom.model.enums.Rating;
 import diplom.model.Post;
 import diplom.model.Tag;
 import diplom.repository.PostRepository;
+import diplom.request.PostForm;
 import diplom.response.*;
+import diplom.service.validation.PostValidator;
 import diplom.utils.TimeCountWrapper;
 import diplom.utils.TimeUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.DataBinder;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -27,6 +32,7 @@ import static diplom.model.enums.ActivityStatus.ACTIVE;
 import static diplom.model.enums.ActivityStatus.INACTIVE;
 import static diplom.model.enums.ModerationStatus.*;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -34,6 +40,8 @@ public class PostService {
     private final CommentService commentService;
     private final VoteService voteService;
     private final AuthService authService;
+    private final PostValidator postValidator;
+    private final GlobalSettingService globalSettingService;
 
     @Value("${post.maxAnnounceSize}")
     private int maxAnnounceSize;
@@ -200,6 +208,42 @@ public class PostService {
         return PublicPostsResponse.builder().posts(posts).count(count).build();
     }
 
+    public ResultResponse addNewPost(PostForm form) {
+        System.err.println("form = " + form);
+        DataBinder dataBinder = new DataBinder(form);
+        dataBinder.setValidator(postValidator);
+        dataBinder.validate();
+        BindingResult bindingResult = dataBinder.getBindingResult();
+
+        if (!bindingResult.hasErrors()) {
+            addPost(form);
+            return ResultResponse.builder().result(true).build();
+        }
+        log.warn("Пост не добавлен: есть ошибки.");
+        ErrorResponse errors = new ErrorResponse();
+        bindingResult.getAllErrors().forEach(e -> {
+            switch (Objects.requireNonNull(e.getCode())) {
+                case "emptyTitle":
+                    errors.setTitle("Заголовок не должен быть пустым.");
+                    break;
+                case "minTitle":
+                    errors.setTitle("Минимальное количество символов в заголовке - 3.");
+                    break;
+                case "emptyText":
+                    errors.setText("Пост не должен быть пустым.");
+                    break;
+                case "minText":
+                    errors.setText("Минимальное количество символов в публикации - 50");
+                    break;
+            }
+        });
+
+        return ResultResponse.builder()
+                .result(false)
+                .errors(errors)
+                .build();
+    }
+
     //------------------------------------------------------------------------------------------------------------------
 
     public int countAvailablePosts() {
@@ -259,5 +303,26 @@ public class PostService {
                 announce;
     }
 
+    private void addPost(PostForm form) {
+        User user = authService.getCurrentUser();
+        String text = form.getText();
+        String title = form.getTitle();
+        ActivityStatus activity = form.getActive() == 1 ? ACTIVE : INACTIVE;
+        long timestamp = form.getTimestamp();
+        List<String> tags = form.getTags();
+
+        Post post = new Post();
+        post.setUser(user);
+        post.setText(text);
+        post.setTitle(title);
+        post.setTime(TimeUtil.getLocalDateTimeCheck(timestamp));
+        post.setActivityStatus(activity);
+        if (!globalSettingService.preModerationEnabled()) {
+            post.setModerationStatus(ACCEPTED);
+        }
+        post.addTags(tags);
+        log.info("Новый пост добавлен.");
+        postRepository.saveAndFlush(post);
+    }
 
 }

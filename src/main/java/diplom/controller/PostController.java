@@ -1,6 +1,7 @@
 package diplom.controller;
 
 import diplom.model.enums.Rating;
+import diplom.request.PostForm;
 import diplom.request.RatingForm;
 import diplom.response.CurrentPostResponse;
 import diplom.response.PublicPostsResponse;
@@ -94,4 +95,9 @@ public class PostController {
         return postService.postsToPublish(offset, limit, status);
     }
 
+    @PostMapping
+    @PreAuthorize("hasAuthority('user:write')")
+    public ResultResponse addNewPost(@RequestBody PostForm form) {
+        return postService.addNewPost(form);
+    }
 }

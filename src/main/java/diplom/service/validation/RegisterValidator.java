@@ -4,6 +4,7 @@ import diplom.repository.UserRepository;
 import diplom.request.RegisterForm;
 import diplom.service.CaptchaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -13,6 +14,8 @@ import org.springframework.validation.Validator;
 public class RegisterValidator implements Validator {
     private final CaptchaService captchaService;
     private final UserRepository userRepository;
+    @Value("${validation.user.minPassword}")
+    private int minPassword;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -22,7 +25,7 @@ public class RegisterValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         RegisterForm form = (RegisterForm) target;
-        if (form.getPassword().length() < 6) {
+        if (form.getPassword().length() < minPassword) {
             errors.reject("password");
         }
         if (userRepository.existsByEmail(form.getEmail())) {

@@ -10,6 +10,8 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -86,7 +88,7 @@ public class Post {
         return comments;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(name = "tag2post",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
@@ -96,4 +98,16 @@ public class Post {
     }
 
     //------------------------------------------------------------------------------------------------------------------
+
+    @Transient
+    public void addTags(List<String> tags) {
+        if (this.tags == null) {
+            this.tags = new HashSet<>();
+        }
+        for (String tagName : tags) {
+            Tag tag = new Tag();
+            tag.setName(tagName);
+            this.tags.add(tag);
+        }
+    }
 }

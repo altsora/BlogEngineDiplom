@@ -17,6 +17,13 @@ logging:
 post:
   maxAnnounceSize: 200
 
+validation:
+  post:
+    minTitleLength: 3
+    minTextLength: 3
+  user:
+    minPassword: 6
+
 captcha:
   hours: 2
   minutes: 0

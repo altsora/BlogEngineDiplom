@@ -28,7 +28,7 @@ public class Tag {
     }
 
     @JsonManagedReference
-    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     public Set<Post> getPosts() {
         return posts;
     }
