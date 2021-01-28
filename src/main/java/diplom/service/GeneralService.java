@@ -2,6 +2,9 @@ package diplom.service;
 
 import diplom.model.Post;
 import diplom.model.User;
+import diplom.model.enums.ModerationStatus;
+import diplom.request.ModerationForm;
+import diplom.response.ResultResponse;
 import diplom.response.StatisticResponse;
 import diplom.utils.TimeUtil;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -67,6 +70,28 @@ public class GeneralService {
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    public ResultResponse moderation(ModerationForm form) {
+        User user = authService.getCurrentUser();
+        Optional<Post> postOptional = postService.findById(form.getPostId());
+        if (postOptional.isEmpty()) {
+            return ResultResponse.builder().result(false).build();
+        }
+        Post post = postOptional.get();
+        switch (form.getDecision()) {
+            case "accept":
+                post.setModerationStatus(ModerationStatus.ACCEPTED);
+                break;
+            case "decline":
+                post.setModerationStatus(ModerationStatus.DECLINED);
+                break;
+            default:
+                return ResultResponse.builder().result(false).build();
+        }
+        post.setModerator(user);
+        postService.saveAndFlush(post);
+        return ResultResponse.builder().result(true).build();
     }
 
     //------------------------------------------------------------------------------------------------------------------

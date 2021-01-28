@@ -1,6 +1,7 @@
 package diplom.controller;
 
 import diplom.request.CommentForm;
+import diplom.request.ModerationForm;
 import diplom.request.SettingsForm;
 import diplom.response.*;
 import diplom.service.*;
@@ -66,5 +67,11 @@ public class GeneralController {
     @PreAuthorize("hasAuthority('user:write')")
     public ResponseEntity<AbstractResponse> addComment(@RequestBody CommentForm form) {
         return commentService.addComment(form);
+    }
+
+    @PostMapping("/moderation")
+    @PreAuthorize("hasAuthority('user:moderate')")
+    public ResultResponse moderation(@RequestBody ModerationForm form) {
+        return generalService.moderation(form);
     }
 }

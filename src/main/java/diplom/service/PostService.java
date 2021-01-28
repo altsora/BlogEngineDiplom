@@ -270,6 +270,17 @@ public class PostService {
         return postRepository.getTimeOfFirstPost();
     }
 
+    public Post getOne(long postId) {
+        return postRepository.getOne(postId);
+    }
+
+    public Optional<Post> findById(long postId) {
+        return postRepository.findById(postId);
+    }
+
+    public Post saveAndFlush(Post post) {
+        return postRepository.saveAndFlush(post);
+    }
     //------------------------------------------------------------------------------------------------------------------
 
     private List<PostResponse> getPostResponses(List<Post> postListRep) {
