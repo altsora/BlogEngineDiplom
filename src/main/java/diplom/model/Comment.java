@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Data
 @ToString(exclude = {"children", "parent"})
 @EqualsAndHashCode(exclude = {"children", "parent"})
+@NoArgsConstructor
 public class Comment {
     private long id;
     private Comment parent;
@@ -24,6 +26,13 @@ public class Comment {
     private String text;
 
     private Set<Comment> children;
+
+    public Comment(Post post, User user, String text) {
+        this.post = post;
+        this.user = user;
+        this.text = text;
+        this.time = LocalDateTime.now();
+    }
 
     //------------------------------------------------------------------------------------------------------------------
 

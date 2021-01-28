@@ -1,17 +1,14 @@
 package diplom.controller;
 
+import diplom.request.CommentForm;
 import diplom.request.SettingsForm;
-import diplom.response.Blog;
-import diplom.response.CalendarResponse;
-import diplom.response.ResultResponse;
-import diplom.response.StatisticResponse;
+import diplom.response.*;
 import diplom.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.Map;
 
 
@@ -24,7 +21,7 @@ public class GeneralController {
     private final PostService postService;
     private final TagService tagService;
     private final GeneralService generalService;
-    private final AuthService authService;
+    private final CommentService commentService;
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -63,5 +60,11 @@ public class GeneralController {
     @GetMapping("/statistics/all")
     public ResponseEntity<StatisticResponse> getAllStatistics() {
         return generalService.getAllStatistics();
+    }
+
+    @PostMapping("/comment")
+    @PreAuthorize("hasAuthority('user:write')")
+    public ResponseEntity<AbstractResponse> addComment(@RequestBody CommentForm form) {
+        return commentService.addComment(form);
     }
 }

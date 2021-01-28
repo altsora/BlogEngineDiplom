@@ -10,9 +10,10 @@ import java.util.List;
 @Getter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-public class ResultResponse {
+public class ResultResponse extends AbstractResponse {
     private boolean result;
     private List<TagResponse> tags;
     private UserLoginResponse user;
     private ErrorResponse errors;
+    private Long id;
 }

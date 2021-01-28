@@ -23,6 +23,8 @@ validation:
     minTextLength: 3
   user:
     minPassword: 6
+  comment:
+    minLength: 5
 
 captcha:
   hours: 2

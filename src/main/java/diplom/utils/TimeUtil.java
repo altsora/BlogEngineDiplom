@@ -1,6 +1,9 @@
 package diplom.utils;
 
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 public final class TimeUtil {
     public static final ZoneId TIME_ZONE = ZoneId.of("UTC");
@@ -21,20 +24,6 @@ public final class TimeUtil {
 
     private static LocalDateTime now() {
         return LocalDateTime.now();
-    }
-
-    @Deprecated
-    public static void returnToPresentIfOld(LocalDateTime localDateTime) {
-        if (localDateTime.isBefore(LocalDateTime.now(TIME_ZONE))) {
-            localDateTime = LocalDateTime.now(TIME_ZONE);
-        }
-    }
-
-    @Deprecated
-    public static LocalDateTime convertLocalTimeInUtcTime(LocalDateTime localDateTime) {
-        ZonedDateTime localZone = localDateTime.atZone(ZoneId.systemDefault());
-        ZonedDateTime utcZone = localZone.withZoneSameInstant(TIME_ZONE);
-        return utcZone.toLocalDateTime();
     }
 
     private TimeUtil() {
