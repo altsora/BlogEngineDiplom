@@ -15,7 +15,7 @@ logging:
 #    org.hibernate.type: TRACE
 
 post:
-  maxAnnounceSize: 200
+  maxAnnounceSize: 150
 
 validation:
   post:
@@ -34,6 +34,14 @@ captcha:
   height: 35
   imageEncoding: data:image/png;base64,
   formatName: png
+
+image:
+  avatar:
+    height: 35
+    width: 35
+  nameLength:
+    folder: 3
+    file: 3
 
 blog:
   title: Паблик на локалхосте

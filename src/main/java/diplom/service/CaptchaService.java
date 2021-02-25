@@ -1,6 +1,5 @@
 package diplom.service;
 
-import com.github.cage.YCage;
 import diplom.model.CaptchaCode;
 import diplom.repository.CaptchaCodeRepository;
 import diplom.response.CaptchaResponse;
@@ -9,11 +8,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Optional;
@@ -39,13 +33,14 @@ public class CaptchaService {
     private String formatName;
 
     private final CaptchaCodeRepository captchaCodeRepository;
+    private final ImageService imageService;
 
     //------------------------------------------------------------------------------------------------------------------
 
     public CaptchaResponse createCaptcha() {
         CaptchaCode captcha = generateCaptcha();
         String secret = captcha.getSecret();
-        String image = getCaptchaImageCode(captcha.getCode());
+        String image = imageService.getCaptchaImageCode(captcha.getCode(), width, height, formatName);
         CaptchaResponse response = new CaptchaResponse();
         response.setSecret(secret);
         response.setImage(imageEncoding + image);
@@ -66,26 +61,6 @@ public class CaptchaService {
     }
 
     //------------------------------------------------------------------------------------------------------------------
-
-    private String getCaptchaImageCode(String code) {
-        BufferedImage image = new YCage().drawImage(code);
-        if (image.getWidth() > width && image.getHeight() > height) {
-            int type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
-            BufferedImage resizeImage = new BufferedImage(width, height, type);
-            Graphics2D g = resizeImage.createGraphics();
-            g.drawImage(image, 0, 0, width, height, null);
-            g.dispose();
-            image = resizeImage;
-        }
-        byte[] imageBytes = null;
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            ImageIO.write(image, formatName, baos);
-            imageBytes = baos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Base64.getEncoder().encodeToString(imageBytes);
-    }
 
     private CaptchaCode generateCaptcha() {
         String code = generateCode();
